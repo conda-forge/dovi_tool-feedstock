@@ -11,13 +11,12 @@ record = next(
 if record is None:
     raise SystemExit(f"Could not find {package} package record")
 
-bad = []
-for path in json.loads(record.read_text()).get("files", []):
-    lower = path.lower()
-    if lower.endswith(".a") or (
-        lower.endswith(".lib") and not lower.endswith(".dll.lib")
-    ):
-        bad.append(path)
+bad = [
+    path
+    for path in json.loads(record.read_text())["files"]
+    if path.lower().endswith(".a")
+    or (path.lower().endswith(".lib") and not path.lower().endswith(".dll.lib"))
+]
 
 if bad:
     raise SystemExit(

@@ -41,16 +41,32 @@ outputs:
             - expat
             - freetype
             - fontconfig
+      ignore_run_exports:
+        from_package:
+          - expat
     tests:
       - script: dovi_tool --help
       - script: dovi_tool --version
       - package_contents:
           bin:
             - dovi_tool
-      # check no static libs are present
           files:
+      # check no static libs are present
             not_exists:
               - "**/*.a"
+              - "**/pkgconfig/*.pc"
+              - if: unix
+                then: include/**
+              - if: unix
+                then: lib/libdovi*
+              - if: win
+                then: Library/include/**
+              - if: win
+                then: Library/bin/dovi.dll
+              - if: win
+                then: Library/lib/dovi*.lib
+              - if: win
+                then: Library/lib/dovi.def
       - script: python check-no-static-libs.py dovi_tool
         requirements:
           run:
@@ -87,12 +103,18 @@ outputs:
       - package_contents:
           include:
             - libdovi/rpu_parser.h
-          lib:
-            - dovi
-      # check no static libs are present
           files:
             exists:
+              - if: linux
+                then: lib/libdovi.so*
+              - if: osx
+                then: lib/libdovi*.dylib
+              - if: win
+                then: Library/bin/dovi.dll
+              - if: win
+                then: Library/lib/dovi.dll.lib
               - "**/pkgconfig/dovi.pc"
+      # check no static libs are present
             not_exists:
               - "**/*.a"
       - script: python check-no-static-libs.py libdovi
