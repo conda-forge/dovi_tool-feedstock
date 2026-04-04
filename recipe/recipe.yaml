@@ -1,7 +1,7 @@
 context:
   version: "2.3.1"
   libdovi_version: "3.3.2"
-  build_number: 0
+  build_number: 1
 
 recipe:
   name: dovi_tool
@@ -41,12 +41,39 @@ outputs:
             - expat
             - freetype
             - fontconfig
+      ignore_run_exports:
+        from_package:
+          - expat
     tests:
       - script: dovi_tool --help
       - script: dovi_tool --version
       - package_contents:
           bin:
             - dovi_tool
+          files:
+      # check no static libs are present
+            not_exists:
+              - "**/*.a"
+              - "**/pkgconfig/*.pc"
+              - if: unix
+                then: include/**
+              - if: unix
+                then: lib/libdovi*
+              - if: win
+                then: Library/include/**
+              - if: win
+                then: Library/bin/dovi.dll
+              - if: win
+                then: Library/lib/dovi*.lib
+              - if: win
+                then: Library/lib/dovi.def
+      - script: python check-no-static-libs.py dovi_tool
+        requirements:
+          run:
+            - python
+        files:
+          recipe:
+            - check-no-static-libs.py
     about:
       homepage: https://github.com/quietvoid/dovi_tool
       repository: https://github.com/quietvoid/dovi_tool
@@ -76,10 +103,27 @@ outputs:
       - package_contents:
           include:
             - libdovi/rpu_parser.h
-          lib:
-            - dovi
           files:
-            - "**/pkgconfig/dovi.pc"
+            exists:
+              - if: linux
+                then: lib/libdovi.so*
+              - if: osx
+                then: lib/libdovi*.dylib
+              - if: win
+                then: Library/bin/dovi.dll
+              - if: win
+                then: Library/lib/dovi.dll.lib
+              - "**/pkgconfig/dovi.pc"
+      # check no static libs are present
+            not_exists:
+              - "**/*.a"
+      - script: python check-no-static-libs.py libdovi
+        requirements:
+          run:
+            - python
+        files:
+          recipe:
+            - check-no-static-libs.py
     about:
       homepage: https://github.com/quietvoid/dovi_tool/tree/main/dolby_vision
       repository: https://github.com/quietvoid/dovi_tool
