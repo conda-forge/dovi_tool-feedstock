@@ -7,6 +7,11 @@ if [[ -z "${CARGO_BUILD_TARGET:-}" && -n "${RUST_TARGET:-}" ]]; then
     export CARGO_BUILD_TARGET="${RUST_TARGET}"
 fi
 
+# On Linux, if we're cross-compiling, we need to tell fontconfig to dlopen its shared libraries instead of linking against them at build time.
+if [[ "${target_platform:-}" == linux-* && "${build_platform:-}" != "${target_platform:-}" ]]; then
+    export RUST_FONTCONFIG_DLOPEN=1
+fi
+
 export CARGO_PROFILE_RELEASE_STRIP=symbols
 export CARGO_PROFILE_RELEASE_LTO=thin
 

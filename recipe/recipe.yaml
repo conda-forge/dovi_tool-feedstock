@@ -38,7 +38,6 @@ outputs:
       host:
         - if: linux
           then:
-            - expat
             - freetype
             - fontconfig
       ignore_run_exports:
