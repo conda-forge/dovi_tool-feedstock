@@ -17,6 +17,8 @@ Development: https://github.com/quietvoid/dovi_tool
 
 Documentation: https://github.com/quietvoid/dovi_tool/blob/main/README.md
 
+Command-line tools for inspecting, converting, extracting, and muxing Dolby Vision metadata and related HEVC bitstreams.
+
 About libdovi
 -------------
 
@@ -29,6 +31,8 @@ Summary: C library to read and write Dolby Vision metadata
 Development: https://github.com/quietvoid/dovi_tool
 
 Documentation: https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md
+
+Shared C library and headers for parsing, writing, and packaging Dolby Vision metadata.
 
 Current build status
 ====================

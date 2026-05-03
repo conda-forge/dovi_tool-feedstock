@@ -1,7 +1,7 @@
 context:
-  version: "2.3.1"
+  version: "2.3.2"
   libdovi_version: "3.3.2"
-  build_number: 3
+  build_number: 0
 
 recipe:
   name: dovi_tool
@@ -9,7 +9,7 @@ recipe:
 
 source:
   - url: https://github.com/quietvoid/dovi_tool/archive/refs/tags/${{ version }}.tar.gz
-    sha256: 090888c35da017e290614b70108653ea975034c23b48ddd459538a1a6e4cc05a
+    sha256: 8e1ca50219a68ba27a200ea1dd4210a6ef232b5f66d1b6ffc4a8303c87fe16bf
     target_directory: dovi_tool_src
   - url: https://github.com/quietvoid/dovi_tool/archive/refs/tags/libdovi-${{ libdovi_version }}.tar.gz
     sha256: 8ccb1922d7dbb57bc4f2c15c10b90c462f7a5f292efe317c116db923728dd3f1
@@ -17,7 +17,6 @@ source:
 
 build:
   number: ${{ build_number }}
-
 
 outputs:
   - package:
@@ -38,10 +37,12 @@ outputs:
       host:
         - if: linux
           then:
-            - freetype
             - fontconfig
+            - freetype
       ignore_run_exports:
         from_package:
+          # fontconfig pulls expat transitively on Linux, but the Rust binary
+          # uses the crate's dlopen mode rather than linking against libexpat.
           - expat
     tests:
       - script:
@@ -50,25 +51,26 @@ outputs:
               - dovi_tool --help
               - dovi_tool --version
       - package_contents:
+          strict: true
           bin:
             - dovi_tool
           files:
-      # check no static libs are present
+            exists:
+              - etc/conda/test-files/dovi_tool/**/check-no-static-libs.py
+            # Keep the CLI output free of library artifacts.
             not_exists:
               - "**/*.a"
               - "**/pkgconfig/*.pc"
               - if: unix
-                then: include/**
-              - if: unix
-                then: lib/libdovi*
+                then:
+                  - include/**
+                  - lib/libdovi*
               - if: win
-                then: Library/include/**
-              - if: win
-                then: Library/bin/dovi.dll
-              - if: win
-                then: Library/lib/dovi*.lib
-              - if: win
-                then: Library/lib/dovi.def
+                then:
+                  - Library/include/**
+                  - Library/bin/dovi.dll
+                  - Library/lib/dovi*.lib
+                  - Library/lib/dovi.def
       - script:
           - if: build_platform == target_platform or target_platform == "linux-aarch64"
             then:
@@ -84,6 +86,7 @@ outputs:
       repository: https://github.com/quietvoid/dovi_tool
       documentation: https://github.com/quietvoid/dovi_tool/blob/main/README.md
       summary: CLI utilities for working with Dolby Vision metadata and HEVC streams
+      description: Command-line tools for inspecting, converting, extracting, and muxing Dolby Vision metadata and related HEVC bitstreams.
       license: MIT
       license_file:
         - dovi_tool_src/LICENSE
@@ -117,11 +120,11 @@ outputs:
               - if: osx
                 then: lib/libdovi*.dylib
               - if: win
-                then: Library/bin/dovi.dll
-              - if: win
-                then: Library/lib/dovi.dll.lib
+                then:
+                  - Library/bin/dovi.dll
+                  - Library/lib/dovi.dll.lib
               - "**/pkgconfig/dovi.pc"
-      # check no static libs are present
+            # check no static libs are present
             not_exists:
               - "**/*.a"
       - script:
@@ -150,6 +153,7 @@ outputs:
       repository: https://github.com/quietvoid/dovi_tool
       documentation: https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md
       summary: C library to read and write Dolby Vision metadata
+      description: Shared C library and headers for parsing, writing, and packaging Dolby Vision metadata.
       license: MIT
       license_file:
         - libdovi_src/dolby_vision/LICENSE
@@ -158,10 +162,11 @@ outputs:
 about:
   homepage: https://github.com/quietvoid/dovi_tool
   repository: https://github.com/quietvoid/dovi_tool
+  documentation: https://github.com/quietvoid/dovi_tool/blob/main/README.md
   summary: CLI tools and a C library for working with Dolby Vision metadata
+  description: Split packaging for the dovi_tool command-line utilities and the libdovi shared C library used for Dolby Vision metadata workflows.
   license: MIT
   license_file: dovi_tool_src/LICENSE
-
 
 extra:
   feedstock-name: dovi_tool
