@@ -1,7 +1,7 @@
 context:
   version: "2.3.2"
   libdovi_version: "3.3.2"
-  dovi_tool_build_number: 0
+  dovi_tool_build_number: 1
   libdovi_build_number: 4
 
 recipe:
@@ -16,12 +16,14 @@ source:
     sha256: 8ccb1922d7dbb57bc4f2c15c10b90c462f7a5f292efe317c116db923728dd3f1
     target_directory: libdovi_src
 
+build:
+  number: ${{ dovi_tool_build_number }}
+
 outputs:
   - package:
       name: dovi_tool
       version: ${{ version }}
     build:
-      number: ${{ dovi_tool_build_number }}
       script: build-dovi_tool
     requirements:
       build:
