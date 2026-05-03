@@ -1,7 +1,8 @@
 context:
   version: "2.3.2"
   libdovi_version: "3.3.2"
-  build_number: 0
+  dovi_tool_build_number: 1
+  libdovi_build_number: 4
 
 recipe:
   name: dovi_tool
@@ -16,7 +17,7 @@ source:
     target_directory: libdovi_src
 
 build:
-  number: ${{ build_number }}
+  number: ${{ dovi_tool_build_number }}
 
 outputs:
   - package:
@@ -96,6 +97,7 @@ outputs:
       name: libdovi
       version: ${{ libdovi_version }}
     build:
+      number: ${{ libdovi_build_number }}
       script: build-libdovi
     requirements:
       build:
