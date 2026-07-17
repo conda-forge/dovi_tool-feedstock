@@ -1,8 +1,8 @@
 context:
-  version: "2.3.2"
-  libdovi_version: "3.3.2"
-  dovi_tool_build_number: 1
-  libdovi_build_number: 4
+  version: "2.3.3"
+  libdovi_version: "3.4.0"
+  build_number: 0
+  libdovi_build_number: 0
 
 recipe:
   name: dovi_tool
@@ -10,14 +10,14 @@ recipe:
 
 source:
   - url: https://github.com/quietvoid/dovi_tool/archive/refs/tags/${{ version }}.tar.gz
-    sha256: 8e1ca50219a68ba27a200ea1dd4210a6ef232b5f66d1b6ffc4a8303c87fe16bf
+    sha256: b4906f67b339b10f885a5c7d89364a359cbd3845f3b95115cac5d7964e13422d
     target_directory: dovi_tool_src
   - url: https://github.com/quietvoid/dovi_tool/archive/refs/tags/libdovi-${{ libdovi_version }}.tar.gz
-    sha256: 8ccb1922d7dbb57bc4f2c15c10b90c462f7a5f292efe317c116db923728dd3f1
+    sha256: 8eac4d1c3134f53e8eb216db6450307a737425844113e480d1e9713c142a9fa2
     target_directory: libdovi_src
 
 build:
-  number: ${{ dovi_tool_build_number }}
+  number: ${{ build_number }}
 
 outputs:
   - package:
